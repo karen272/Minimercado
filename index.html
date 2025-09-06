@@ -213,7 +213,7 @@
               <p>© <span>Copyright</span> <strong class="sitename">PochocleraLa22</strong>. Todos los derechos reservados</p>
             </div>
             <div class="credits mt-1">
-              Diseñado por <a href="https://api.whatsapp.com/send?phone=2291459738&text=Hola!%20me%20intersa%20hacer%20una%20pagina%20web%20como%20la%20de%20PochoclosLa22">Karen Celes</a>
+              Diseñado por <a href="https://api.whatsapp.com/send?phone=5492291459738&text=Hola!%20me%20interesa%20hacer%20una%20página%20web%20como%20la%20de%20PochoclosLa22">Karen Celes</a>
             </div>
           </div>
           <div class="col-lg-6 col-md-12">
@@ -246,8 +246,9 @@
   <script src="assets/vendor/drift-zoom/Drift.min.js"></script>
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
 
-  
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.20.0"></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.20.0"></script>
+
   <!-- Main JS Files -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/carrito.js"></script>
@@ -288,76 +289,102 @@
       </div>
     </div>
   </div>
-<script>
-  // Verificar si supabase existe
-  if (!window.supabase) {
-    console.error('❌ Supabase no se cargó');
-    alert('Error: Supabase no está disponible.');
-    throw new Error('Supabase no cargado');
-  }
 
-  // Inicializar Supabase
-  const supabase = window.supabase.createClient(
-    'https://ojwgjqccvfxwljyhcipa.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qd2dqcWNjdmZ4d2xqeWhjaXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMTE0NDIsImV4cCI6MjA3MjY4NzQ0Mn0.XYv1t0vFLJ1R4ZnazHec-7c5spTIFHNAKgnbHtdnOrU'
-  );
-
-  // Cargar productos cuando el DOM esté listo
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const { data, error } = await supabase.from('products').select('*');
-
-      if (error) {
-        console.error('❌ Error al cargar productos:', error);
-        return;
-      }
-
-      if (!data || !Array.isArray(data)) {
-        console.error('❌ No se recibieron productos válidos');
-        return;
-      }
-
-      const container = document.getElementById('products-container');
-      container.innerHTML = '';
-
-      data.forEach(p => {
-        const col = document.createElement('div');
-        col.className = 'col-lg-3 col-md-6';
-        col.innerHTML = `
-          <div class="product-item">
-            <div class="product-image">
-              <img src="${p.image_url || 'assets/img/product/default.png'}" 
-                   alt="${p.name}" 
-                   class="img-fluid" 
-                   loading="lazy">
-              <button 
-                class="cart-btn" 
-                data-name="${p.name}" 
-                data-price="${p.price}" 
-                data-id="${p.id}" 
-                data-img="${p.image_url || 'assets/img/product/default.png'}">
-                Agregar al carrito
-              </button>
-            </div>
-            <div class="product-info">
-              <h4 class="product-name">${p.name}</h4>
-              <div class="product-price">$${new Intl.NumberFormat('es-AR').format(p.price)}</div>
-            </div>
-          </div>
-        `;
-        container.appendChild(col);
-      });
-
-    } catch (err) {
-      console.error('❌ Error inesperado:', err);
-      document.getElementById('products-container').innerHTML = `
-        <div class="col-12 text-center">
-          <p class="text-danger">No se pudieron cargar los productos.</p>
-        </div>
-      `;
+  <!-- Script principal -->
+  <script>
+    // Verificar si Supabase se cargó
+    if (!window.supabase) {
+      console.error('❌ Supabase no se cargó');
+      alert('Error: Supabase no está disponible.');
+      throw new Error('Supabase no cargado');
     }
-  });
-</script>
+
+    // Inicializar Supabase
+    const supabaseClient = window.supabase.createClient(
+      'https://ojwgjqccvfxwljyhcipa.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qd2dqcWNjdmZ4d2xqeWhjaXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMTE0NDIsImV4cCI6MjA3MjY4NzQ0Mn0.XYv1t0vFLJ1R4ZnazHec-7c5spTIFHNAKgnbHtdnOrU'
+    );
+
+    // Cargar productos cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { data, error } = await supabaseClient.from('products').select('*');
+
+        if (error) {
+          console.error('❌ Error al cargar productos:', error);
+          document.getElementById('products-container').innerHTML = `
+            <div class="col-12 text-center">
+              <p class="text-danger">Error al cargar productos.</p>
+            </div>`;
+          return;
+        }
+
+        if (!data || !Array.isArray(data)) {
+          console.error('❌ No se recibieron productos válidos');
+          return;
+        }
+
+        const container = document.getElementById('products-container');
+        container.innerHTML = '';
+
+        data.forEach(p => {
+          const col = document.createElement('div');
+          col.className = 'col-lg-3 col-md-6';
+          col.innerHTML = `
+            <div class="product-item">
+              <div class="product-image">
+                <img src="${p.image_url || 'assets/img/product/default.png'}" 
+                     alt="${p.name}" 
+                     class="img-fluid" 
+                     loading="lazy">
+                <button 
+                  class="cart-btn" 
+                  data-id="${p.id}" 
+                  data-name="${p.name}" 
+                  data-price="${p.price}" 
+                  data-img="${p.image_url || 'assets/img/product/default.png'}">
+                  Agregar al carrito
+                </button>
+              </div>
+              <div class="product-info">
+                <h4 class="product-name">${p.name}</h4>
+                <div class="product-price">$${new Intl.NumberFormat('es-AR').format(p.price)}</div>
+              </div>
+            </div>`;
+          container.appendChild(col);
+        });
+
+        // ✅ Event delegation: escucha clicks en el contenedor
+        container.addEventListener('click', (e) => {
+          const btn = e.target.closest('.cart-btn');
+          if (!btn) return;
+
+          const producto = {
+            id: btn.dataset.id,
+            nombre: btn.dataset.name,
+            precio: parseFloat(btn.dataset.price),
+            img: btn.dataset.img,
+            cantidad: 1
+          };
+
+          agregarAlCarrito(producto);
+
+          const modalMessage = document.getElementById("cartModalMessage");
+          modalMessage.textContent = `${producto.nombre} agregado al carrito ✅`;
+
+          const cartModal = new bootstrap.Modal(document.getElementById("cartModal"));
+          cartModal.show();
+        });
+
+      } catch (err) {
+        console.error('❌ Error inesperado:', err);
+        document.getElementById('products-container').innerHTML = `
+          <div class="col-12 text-center">
+            <p class="text-danger">No se pudieron cargar los productos.</p>
+          </div>`;
+      }
+    });
+  </script>
 
 </body>
 </html>
